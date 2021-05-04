@@ -1,2 +1,2 @@
 language = "c"
-run = ""
+run = "gcc -Wall main.c"
