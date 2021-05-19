@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -34,7 +33,7 @@ void gameInit(char P[][4], Player Ord[], Player Cha[], Player Free[])
     }
 }
 
-void gameDisplay(char P[][4], Player Ord[], Player Cha[], Player Free[]){
+void gameDisplay(char P[][4], Player Ord[], Player Cha[], Player Free[], Player H[]){
 
     int row,col;
   //  gameUpdate(P,Ord,Cha,Free);
@@ -57,12 +56,16 @@ void gameDisplay(char P[][4], Player Ord[], Player Cha[], Player Free[]){
 	    if ((row+1) % 4 ==0)
       	printf("\n");
     }
+  
+  printf("\n\nSpaces Cha cannot take: ");
+  for(row=0; row<5;row++)
+    printf("(%d,%d)", H[row].row, H[row].col);
 
-    printf("\nOrd:\n");
+  printf("\nOrd:\n");
 	for (row = 0; row < 4; row++)
   	printf("(%d,%d)", Ord [row].row, Ord[row].col);
 
-    printf("\nCha:\n");
+  printf("\nCha:\n");
   for (row = 0; row < 7; row++)
     printf("(%d,%d)", Cha[row].row, Cha[row].col);
 }
@@ -117,7 +120,7 @@ void addFree (Player Free [], Player pos){
     
 }
 
-void nextPlayerMove(char P[][4], Player H[], Player Free[],int row, int col, Player nowPlayer[], int *nElem, int *turn){
+void nextMove(char P[][4], Player H[], Player Free[],int row, int col, Player nowPlayer[], int *nElem, int *turn){
 
     if(*turn && !checkArray(row, col, H, 5) && checkArray(row, col, Free, 16))
     {
@@ -188,20 +191,12 @@ int gameOver(Player Cha[],Player W[][3],Player Free[],Player H[]){
 	return 0;
                 
 }
-int convertInteger(char c)
-{
-	if ((c >= '1' && c <= '4') || (c >= '1' && c <= '4'))
-		return (int)(c);
-	printf("\n\nINPUT INVALID!");
-	printf("\n--------------------------------\n");
-	return 0;
-}
 
 int main(){
     Player W[][3] = {{{1, 4},{2, 4},{3, 4}}, 
-					 {{2, 2},{3, 3},{4, 4}}, 
-					 {{2, 3},{3, 2},{4, 1}}, 
-					 {{4, 2},{4, 3},{4, 4}}};
+					           {{2, 2},{3, 3},{4, 4}}, 
+					           {{2, 3},{3, 2},{4, 1}}, 
+					           {{4, 2},{4, 3},{4, 4}}};
     Player H[] = {{1, 1},{1, 2},{1, 3},{2, 1},{3, 1}};
 
     char P[4][4];
@@ -209,46 +204,58 @@ int main(){
     int turn =1, over = 0;
     int ordCtr=0, chaCtr = 0;
     int row,col;
-    char input;
+    char input, dump;
 
     printf("Tic-Tac-Toe but on drugs\n");
     gameInit(P, Ord, Cha, Free);
-    gameDisplay(P, Ord, Cha, Free);
+    gameDisplay(P, Ord, Cha, Free, H);
 
-    while(!over)
-    { 
+    while(!over){
+      row=0; col=0; 
       switch(turn){
         case 1:
           printf("\n\n(1) Cha's Turn\n");	
           do{
         	  printf("Enter row position: ");
-            scanf("%c",&input);
-			row = convertInteger(input);
-			printf("NUMBER: %d",row);
-          }while(row>=1&&row<=4);
+            scanf("%c%c",&input,&dump);
+            if(input>='1'&&input<='4')
+			        row = atoi(&input);
+            else
+              printf("\nInput is invalid.\n");
+          }while(row==0);
           do{
             printf("Enter col position: ");
-            scanf("%c",&input); 
-			col = convertInteger(input); 
-          }while(col>=1&&col<=4);
+            scanf("%c%c",&input,&dump); 
+            if(input>='1'&&input<='4')
+			        col = atoi(&input);
+            else
+              printf("\nInput is invalid.\n"); 
+          }while(col<1&&col>4);
           
-          nextPlayerMove(P, H, Free, row, col, Cha, &chaCtr, &turn);
-          gameDisplay(P,Ord,Cha,Free);
+          nextMove(P, H, Free, row, col, Cha, &chaCtr, &turn);
+          gameDisplay(P,Ord,Cha,Free, H);
           break;
         case 0:
           printf("\n\n(2)Ord's Turn\n");
           do{
-            printf("Enter row position: ");
-            scanf("%c",&input);
-			row = convertInteger(input);
-          }while(row>=1&&row<=4);
+        	  printf("Enter row position: ");
+            scanf("%c%c",&input,&dump);
+            if(input>='1'&&input<='4')
+			        row = atoi(&input);
+            else
+              printf("\nInput is invalid.\n");
+          }while(row==0);
+          
           do{
             printf("Enter col position: ");
-            scanf("%c",&input); 
-			col = convertInteger(input);   
-          }while(col>=1&&col<=4);
-          nextPlayerMove(P, H, Free, row, col, Ord, &ordCtr, &turn);
-          gameDisplay(P,Ord,Cha,Free);
+            scanf("%c%c",&input,&dump); 
+            if(input>='1'&&input<='4')
+			        col = atoi(&input);
+            else
+              printf("\nInput is invalid.\n"); 
+          }while(col<1&&col>4);
+          nextMove(P, H, Free, row, col, Ord, &ordCtr, &turn);
+          gameDisplay(P,Ord,Cha,Free, H);
           break;	        
         }
       
