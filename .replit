@@ -1,2 +1,2 @@
 language = "c"
-run = "gcc -Wall main2.c && ./a.out"
+run = "gcc -Wall CCDSTRU-35.c -o CCDSTRU-35&& ./CCDSTRU-35"
