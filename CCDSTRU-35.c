@@ -7,6 +7,7 @@ struct position{
 
 typedef struct position Player;
 
+/* Initializes values of variables in the game */
 void gameInit(char P[][4], Player Ord[], Player Cha[], Player Free[])
 {
     int row,col;
@@ -14,7 +15,7 @@ void gameInit(char P[][4], Player Ord[], Player Cha[], Player Free[])
     // set board to 0
     for (row=0; row < 4; row ++)
   	    for (col =0; col < 4; col++)
-  	        P[row][col] = '*';
+  	        P[row][col] = ' ';
     // init free
     for (row = 0; row < 4; row ++)
         for (col = 0; col < 4; col ++){
@@ -24,19 +25,19 @@ void gameInit(char P[][4], Player Ord[], Player Cha[], Player Free[])
         } 
     // init Ord and Cha to 0
     for (row = 0; row < 4; row++){
-    Ord[row].col = 0;
-    Ord[row].row = 0;
+      Ord[row].col = 0;
+      Ord[row].row = 0;
     }
-    for (row = 0; row < 7; row++){
-    Cha[row].col = 0;
-    Cha[row].row = 0;
+    for (row = 0; row < 11; row++){
+      Cha[row].col = 0;
+      Cha[row].row = 0;
     }
 }
 
+/* Displays board, FREE, spaces Cha cannot take, and checks array */
 void gameDisplay(char P[][4], Player Ord[], Player Cha[], Player Free[], Player H[]){
 
     int row,col;
-  //  gameUpdate(P,Ord,Cha,Free);
     printf("\nBOARD:\n");
     printf("    1   2   3   4  \n");
     printf("  _________________\n");
@@ -52,7 +53,7 @@ void gameDisplay(char P[][4], Player Ord[], Player Cha[], Player Free[], Player 
   printf("\n\nFree Spaces:\n");
     for (row = 0; row < 16; row ++){
       printf("(%d,%d)",Free[row].row, Free[row].col);
-      
+    
 	    if ((row+1) % 4 ==0)
       	printf("\n");
     }
@@ -60,24 +61,30 @@ void gameDisplay(char P[][4], Player Ord[], Player Cha[], Player Free[], Player 
   printf("\n\nSpaces Cha cannot take: ");
   for(row=0; row<5;row++)
     printf("(%d,%d)", H[row].row, H[row].col);
+  printf("\n");
 
-  printf("\nOrd:\n");
+  printf("\nOrd:");
 	for (row = 0; row < 4; row++)
   	printf("(%d,%d)", Ord [row].row, Ord[row].col);
+  printf("\n");
 
-  printf("\nCha:\n");
-  for (row = 0; row < 7; row++)
+  printf("\nCha:");
+  for (row = 0; row < 11; row++)
     printf("(%d,%d)", Cha[row].row, Cha[row].col);
+  printf("\n");
+
 }
 
+/* checks if cha or ord can take up a space */
 int checkArray(int x, int y, Player Array[], int nElem){
     int i;
     for(i=0; i < nElem; i++)
         if(Array[i].row == x && Array[i].col == y)
-            return 1;
+          return 1;
     return 0;
 }  
 
+/* if cha/ord takes a free slot, it will no longer be free */
 void removeFree (Player Free[], int row, int col){
   int i;
 
@@ -89,6 +96,7 @@ void removeFree (Player Free[], int row, int col){
   }
 }
 
+/* if when ord decides to free up a spot, it will be free */
 void addFree (Player Free [], Player pos){
   int row, col;
   int ctr = 0;
@@ -120,6 +128,7 @@ void addFree (Player Free [], Player pos){
     
 }
 
+/* when ord removes a position from his list, it becomes 0,0 */
 void removePosition(Player nowPlayer[], int row, int col){
   int i;
 
@@ -131,6 +140,7 @@ void removePosition(Player nowPlayer[], int row, int col){
   }
 }
 
+/* when ord takes a free space, it will take the values of the input */
 void addPosition(Player nowPlayer[], int row, int col){
   int i, flag=0;
 
@@ -143,6 +153,7 @@ void addPosition(Player nowPlayer[], int row, int col){
   }
 }
 
+/* starts and ends turn, assigns positions to cha's list or ord's list */
 void nextMove(char P[][4], Player H[], Player Free[],int row, int col, Player nowPlayer[], int *nElem, int *turn){
 
     if(*turn && !checkArray(row, col, H, 5) && checkArray(row, col, Free, 16)){
@@ -164,11 +175,12 @@ void nextMove(char P[][4], Player H[], Player Free[],int row, int col, Player no
         removePosition(nowPlayer, row, col);
         Free[(col-1)*4+(row-1)].row=row;
         Free[(col-1)*4+(row-1)].col=col;        
-        P[row-1][col-1]='*';
+        P[row-1][col-1]=' ';
         (*nElem)--;
     }
 }
 
+/* determine's cha or ord's winning condition */
 int gameOver(Player Cha[],Player W[][3],Player Free[],Player H[], int turn){
   int i,j,k;
   int count1=0, flag=0, count2=0;
@@ -227,13 +239,13 @@ int main(){
     Player H[] = {{1, 1},{1, 2},{1, 3},{2, 1},{3, 1}};
 
     char P[4][4];
-    Player Ord[4], Cha[7], Free[16];
+    Player Ord[4], Cha[11], Free[16];
     int turn =1, over = 0;
     int ordCtr=0, chaCtr = 0;
     int row,col;
     char input, dump;
 
-    printf("Tic-Tac-Toe but on drugs\n");
+    printf("Tic-Tac-Toe with extra rules! \n");
     gameInit(P, Ord, Cha, Free);
     gameDisplay(P, Ord, Cha, Free, H);
 
@@ -245,20 +257,22 @@ int main(){
           printf("\n\n(1) Cha's Turn\n");	
           do{
         	  printf("Enter row position: ");
+            fflush(stdin);
             scanf("%c%c",&input,&dump);
-            if(input>='1'&&input<='4')
-			        row = atoi(&input);
+            if(input!='1'&&input!='2'&&input!='3'&&input!='4')
+			        printf("\nInput is invalid.\n\n");
             else
-              printf("\nInput is invalid.\n");
-          }while(row==0);
+              row = atoi(&input);
+          }while(input!='1'&&input!='2'&&input!='3'&&input!='4');
           do{
             printf("Enter col position: ");
+            fflush(stdin);
             scanf("%c%c",&input,&dump); 
-            if(input>='1'&&input<='4')
-			        col = atoi(&input);
-            else
-              printf("\nInput is invalid.\n"); 
-          }while(col<1&&col>4);
+            if(input!='1'&&input!='2'&&input!='3'&&input!='4')
+			        printf("\nInput is invalid.\n\n");
+            else 
+               col = atoi(&input);
+          }while(input!='1'&&input!='2'&&input!='3'&&input!='4');
           
           nextMove(P, H, Free, row, col, Cha, &chaCtr, &turn);
           
@@ -268,35 +282,35 @@ int main(){
           else
             over=gameOver(Ord, W, Free, H, 0);
 
-          if(over==0)
-            gameDisplay(P,Ord,Cha,Free, H);
+          gameDisplay(P,Ord,Cha,Free, H);
           break;
         case 0:
           printf("\n\n(2)Ord's Turn\n");
           do{
         	  printf("Enter row position: ");
+            fflush(stdin);
             scanf("%c%c",&input,&dump);
-            if(input>='1'&&input<='4')
-			        row = atoi(&input);
+            if(input!='1'&&input!='2'&&input!='3'&&input!='4')
+			        printf("\nInput is invalid.\n\n");
             else
-              printf("\nInput is invalid.\n");
-          }while(row==0);
+              row = atoi(&input);
+          }while(input!='1'&&input!='2'&&input!='3'&&input!='4');
           
           do{
             printf("Enter col position: ");
+            fflush(stdin);
             scanf("%c%c",&input,&dump); 
-            if(input>='1'&&input<='4')
-			        col = atoi(&input);
-            else
-              printf("\nInput is invalid.\n"); 
-          }while(col<1&&col>4);
+            if(input!='1'&&input!='2'&&input!='3'&&input!='4')
+			        printf("\nInput is invalid.\n\n");
+            else 
+               col = atoi(&input);
+          }while(input!='1'&&input!='2'&&input!='3'&&input!='4');
           
           nextMove(P, H, Free, row, col, Ord, &ordCtr, &turn);
 
           over=gameOver(Ord, W, Free, H, 0);
           
-          if(over==0)
-            gameDisplay(P,Ord,Cha,Free, H);
+          gameDisplay(P,Ord,Cha,Free, H);
           break;	        
         }
     }
