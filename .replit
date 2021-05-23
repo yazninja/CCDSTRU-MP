@@ -1,2 +1,2 @@
 language = "c"
-run = "gcc -Wall CCDSTRU-35.c -o CCDSTRU-35&& ./CCDSTRU-35"
+run = "clear && gcc -Wall CCDSTRU-35.c -o CCDSTRU-35&& ./CCDSTRU-35"
