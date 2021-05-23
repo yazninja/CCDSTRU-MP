@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* Structure of X,Y positions*/
 struct position{
     int row,col;
 };
@@ -8,8 +9,7 @@ struct position{
 typedef struct position Player;
 
 /* Initializes values of variables in the game */
-void gameInit(char P[][4], Player Ord[], Player Cha[], Player Free[])
-{
+void gameInit(char P[][4], Player Ord[], Player Cha[], Player Free[]){
     int row,col;
     int k = 0;
     // set board to 0
@@ -21,56 +21,58 @@ void gameInit(char P[][4], Player Ord[], Player Cha[], Player Free[])
         for (col = 0; col < 4; col ++){
             Free[k].row= row+1;
             Free[k].col= col+1;
-		    k++;
+		        k++;
         } 
     // init Ord and Cha to 0
     for (row = 0; row < 4; row++){
-      Ord[row].col = 0;
-      Ord[row].row = 0;
+        Ord[row].col = 0;
+        Ord[row].row = 0;
     }
     for (row = 0; row < 11; row++){
-      Cha[row].col = 0;
-      Cha[row].row = 0;
+        Cha[row].col = 0;
+        Cha[row].row = 0;
     }
 }
 
 /* Displays board, FREE, spaces Cha cannot take, and checks array */
-void gameDisplay(char P[][4], Player Ord[], Player Cha[], Player Free[], Player H[]){
+void gameDisplay(char P[][4], Player Ord[], Player Cha[], Player Free[], Player H[])
+{
 
     int row,col;
     printf("\nBOARD:\n");
     printf("    1   2   3   4  \n");
     printf("  _________________\n");
-    for (row = 0; row < 4; row ++){
+    for (row = 0; row < 4; row ++)
+    {
         printf("%d ",row+1);
-        for (col = 0; col < 4; col++){
+        for (col = 0; col < 4; col++)
+        {
             printf("| %c ", P[row][col]);
-	    }
-		printf("|\n"); 
+	      }
+		    printf("|\n"); 
         printf("  _________________\n");
-  }
-
-  printf("\n\nFree Spaces:\n");
-    for (row = 0; row < 16; row ++){
-      printf("(%d,%d)",Free[row].row, Free[row].col);
-    
-	    if ((row+1) % 4 ==0)
-      	printf("\n");
+    }
+    printf("\n\nFree Spaces:\n");
+    for (row = 0; row < 16; row ++)
+    {
+        printf("(%d,%d)",Free[row].row, Free[row].col);
+        if ((row+1) % 4 ==0)
+      	    printf("\n");
     }
   
   printf("\n\nSpaces Cha cannot take: ");
   for(row=0; row<5;row++)
-    printf("(%d,%d)", H[row].row, H[row].col);
+      printf("(%d,%d)", H[row].row, H[row].col);
   printf("\n");
 
   printf("\nOrd:");
 	for (row = 0; row < 4; row++)
-  	printf("(%d,%d)", Ord [row].row, Ord[row].col);
+  	  printf("(%d,%d)", Ord [row].row, Ord[row].col);
   printf("\n");
 
   printf("\nCha:");
   for (row = 0; row < 11; row++)
-    printf("(%d,%d)", Cha[row].row, Cha[row].col);
+      printf("(%d,%d)", Cha[row].row, Cha[row].col);
   printf("\n");
 
 }
@@ -80,44 +82,46 @@ int checkArray(int x, int y, Player Array[], int nElem){
     int i;
     for(i=0; i < nElem; i++)
         if(Array[i].row == x && Array[i].col == y)
-          return 1;
+            return 1;
     return 0;
 }  
 
 /* if cha/ord takes a free slot, it will no longer be free */
-void removeFree (Player Free[], int row, int col){
-  int i;
-
-  for (i = 0; i < 16; i++){
-    if (Free[i].row==row&&Free[i].col==col){
-    	Free[i].row = 0;
-    	Free[i].col = 0;
+void removeFree (Player Free[], int row, int col)
+{
+    int i;
+    for (i = 0; i < 16; i++){
+    if (Free[i].row==row&&Free[i].col==col)
+    {
+    	  Free[i].row = 0;
+    	  Free[i].col = 0;
 	  }  
   }
 }
 
 /* if when ord decides to free up a spot, it will be free */
-void addFree (Player Free [], Player pos){
-  int row, col;
-  int ctr = 0;
-  int k = 0;
-  Player FreeCopy [16];
-  int PCopy [4][4];
+void addFree (Player Free [], Player pos)
+{
+    int row, col;
+    int ctr = 0;
+    int k = 0;
+    Player FreeCopy [16];
+    int PCopy [4][4];
   
-  //initialize pCopy
-  for (row=0; row < 4; row ++)
-  	for (col=0; col < 4; col++)
-  	  PCopy[row][col] = 0;
+    //initialize pCopy
+    for (row=0; row < 4; row ++)
+  	    for (col=0; col < 4; col++)
+  	        PCopy[row][col] = 0;
   
-  //initialize FreeCopy
-  for (row = 0; row < 4; row ++){
-    for (col = 0; col < 4; col ++){
-      if (PCopy[row][col]==0){ 
-	  	  FreeCopy[k].row= row+1;
-		    FreeCopy[k].col= col+1;
-        k++;
-      }
-    }
+    //initialize FreeCopy
+    for (row = 0; row < 4; row ++){
+      for (col = 0; col < 4; col ++)
+          if (PCopy[row][col]==0)
+          { 
+	  	        FreeCopy[k].row= row+1;
+		          FreeCopy[k].col= col+1;
+              k++;
+          }
   }
 
   ctr = checkArray(pos.row, pos.col, FreeCopy, 16);
